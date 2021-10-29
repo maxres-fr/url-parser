@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"flag"
 	"fmt"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -93,9 +95,15 @@ func main() {
 	flag.Parse()
 
 	if len(flag.Args()) < 1 {
-		panic(errors.New("Please provides URL to parse"))
+		fmt.Printf("Please provides URL to parse")
+		os.Exit(1)
 	}
 	urlString := flag.Args()[0]
+	if urlString == "-" {
+		reader := bufio.NewReader(os.Stdin)
+		input, _ := reader.ReadString('\n')
+		urlString = strings.Trim(input, "\n\r")
+	}
 
 	result, err := parse(urlString, *partPtr, *indexPtr, *fieldPtr)
 	if err != nil {
